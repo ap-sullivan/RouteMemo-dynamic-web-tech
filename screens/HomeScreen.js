@@ -1,9 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { Feather } from "@expo/vector-icons";
+import Map from '../components/Map';
+
 
 function HomeScreen() {
   return (
+
+  //  <ScrollView>
    <View style={styles.container}>
+        <Map />
+  
     <View style={styles.startContainer}>
     <Text style={styles.title}>Start Activity</Text>
     <View style={styles.buttonContainer}>
@@ -15,10 +21,9 @@ function HomeScreen() {
         <Text style={styles.title}>Activity Summary</Text>
     </View>
 
-    <View style={styles.mapContainer}>
-        <Text style={styles.title}>Map</Text>
-    </View>
+   
    </View>
+  //  </ScrollView> 
   )
 }
 
@@ -26,9 +31,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+ 
   },
+
 
     startContainer: {
     alignItems: 'center',
@@ -52,20 +57,13 @@ const styles = StyleSheet.create({
   },
 
   summaryContainer: {
+    height: 200,
     marginTop: 40,
     alignItems: 'center',
     justifyContent: 'center',
 },
 
-mapContainer: {
-    height: 200,
-    borderBlockColor: 'black',
-    borderWidth: 1,
-    paddingHorizontal: 100,
-    marginTop: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+
 
   });
 

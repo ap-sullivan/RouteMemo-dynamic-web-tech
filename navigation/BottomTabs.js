@@ -1,15 +1,55 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import HomeScreen from '../screens/HomeScreen';
-import RunListScreen from '../screens/RunListScreen';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { View } from "react-native";
+import HomeScreen from "../screens/HomeScreen";
+import RunListScreen from "../screens/RunListScreen";
+import { Feather } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarShowLabel: false,
+  tabBarStyle: {
+    position: "absolute",
+    bottom: 20,
+    height: 60,
+    flexDirection: 'row', 
+  },
+  tabBarItemStyle: {
+    justifyContent: 'center', 
+    alignItems: 'center',    
+    height: 60,               
+  },
+  tabBarIconStyle: {
+    width: '100%',
+    height: '100%',
+  },
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "Home") {
+            iconName = "home";
+          } else if (route.name === "RunList") {
+            iconName = "list";
+          }
+
+          return (
+
+            <Feather
+              name={iconName}
+              size={size}
+              color={focused ? "#007AFF" : "gray"}
+            />
+          
+          );
+        },
+      })}
+    >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Run List" component={RunListScreen} />
+      <Tab.Screen name="RunList" component={RunListScreen} />
     </Tab.Navigator>
   );
 }
