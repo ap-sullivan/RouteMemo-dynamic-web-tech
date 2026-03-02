@@ -15,9 +15,14 @@ export default ({ config }) => ({
   },
   ios: {
     supportsTablet: true,
+    infoPlist: {
+    NSLocationWhenInUseUsageDescription:
+      "This app uses your location to track your route and provide you with a summary of your activity.",
+  },
   },
   android: {
     package: 'com.thewebdeveloperglasgow.RouteMemo2',
+    permissions: ['ACCESS_FINE_LOCATION'],
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
