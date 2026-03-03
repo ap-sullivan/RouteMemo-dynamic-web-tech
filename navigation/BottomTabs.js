@@ -12,6 +12,7 @@ function BottomTabs() {
       initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarShowLabel: false,
+        headerShown: false,
   tabBarStyle: {
     position: "absolute",
     bottom: 20,

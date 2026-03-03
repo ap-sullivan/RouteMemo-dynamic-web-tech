@@ -1,55 +1,32 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import { Feather } from "@expo/vector-icons";
-import Map from '../components/Map';
-
+import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Map from "../components/Map";
+import ActivitySummary from "../components/ActivitySummary";
+import StartButton from "../components/StartButton";
 
 function HomeScreen() {
   return (
-
-  //  <ScrollView>
-   <View style={styles.container}>
-        <Map />
-  
-    <View style={styles.startContainer}>
-    <Text style={styles.title}>Start Activity</Text>
-    <View style={styles.buttonContainer}>
-    <Feather name="power" size={124} color="red" style={styles.buttonStyle}/>
-    </View>
-    </View>
-    
-    <View style={styles.summaryContainer}>
-        <Text style={styles.title}>Activity Summary</Text>
-    </View>
-
    
-   </View>
-  //  </ScrollView> 
-  )
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Map />
+
+        <StartButton />
+
+        <View style={styles.summaryContainer}>
+          <ActivitySummary />
+        </View>
+      </View>
+    </SafeAreaView>
+
+
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
- 
-  },
-
-
-    startContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-    
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-
-  buttonContainer: {
-    // zIndex: -1,
-    // height: 100,
-    // backgroundColor: 'red',
+    backgroundColor: "#fff",
   },
 
   buttonStyle: {
@@ -58,14 +35,9 @@ const styles = StyleSheet.create({
 
   summaryContainer: {
     height: 200,
-    marginTop: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-},
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
-
-
-  });
-
-
-export default HomeScreen
+export default HomeScreen;

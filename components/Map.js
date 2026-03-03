@@ -19,6 +19,10 @@ function Map() {
         return;
       }
 
+      // ? Paisley location 
+      //Latitude: 55.8436
+      // Longitude: -4.4292
+
       // Get current location
       let loc = await Location.getCurrentPositionAsync({});
       setLocation(loc.coords);
