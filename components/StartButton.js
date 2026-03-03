@@ -50,7 +50,7 @@ function StartButton() {
       watchId.current = null;
     }
 
-    // work out duration, distance, speed
+    // work out duration distance speed
     const endTime = new Date();
     const duration = (endTime - startTime) / 1000;
     const distance = calculateDistance(route);
@@ -58,6 +58,8 @@ function StartButton() {
 
     // create object with run data to save to async storage
     const activityLog = {
+      id: Date.now().toString(),
+      route,
       startPoint: route[0],
       endPoint: route[route.length - 1],
       duration, 
@@ -98,7 +100,8 @@ function StartButton() {
       <Text style={styles.title}>
         {recording ? "Recording..." : "Start Activity"}
       </Text>
-      <Pressable onPress={handleStart} style={styles.buttonContainer}>
+      <Pressable onPress={handleStart}
+      style={styles.buttonContainer}>
         <Feather
           name="power"
           size={124}
