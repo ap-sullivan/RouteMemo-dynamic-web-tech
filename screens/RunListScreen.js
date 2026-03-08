@@ -1,14 +1,15 @@
-
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RunList from "../components/RunList";
+import RunListTable from "../components/RunListTable";
 
 function RunListScreen({ navigation }) {
+  
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
+
     const loadActivities = async () => {
       const existing = await AsyncStorage.getItem("activities");
       const parsed = existing ? JSON.parse(existing) : [];
@@ -17,20 +18,22 @@ function RunListScreen({ navigation }) {
     };
 
     loadActivities();
-  }, []);
+
+    // Reload when screen is returned after delete
+    const unsubscribe = navigation.addListener("focus", loadActivities);
+
+    return unsubscribe;
+
+  }, [navigation]);
 
   return (
-       <SafeAreaView style={styles.container}>
-        <View>
-          <Text> Area for an overview of all runs, add some stats liek total runs, average time, average spoeed etc</Text>
-        </View>
-      <RunList
-      activities={activities}
-      onPressItem={(run) =>
-        // pass param to details screen to show specific run details
-        navigation.navigate("RunDetails", { runId: run.id })
-      }
-    />
+    <SafeAreaView style={styles.container}>
+      <RunListTable
+        activities={activities}
+        onPressItem={(run) =>
+          navigation.navigate("RunDetails", { runId: run.id })
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -42,7 +45,4 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
- 
-
- 
 });

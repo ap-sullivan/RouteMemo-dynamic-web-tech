@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Map from "../components/Map";
-import ActivitySummary from "../components/ActivitySummary";
+import Colors from "../constants/Colors";
+
 import StartButton from "../components/StartButton";
 
 function HomeScreen() {
@@ -11,10 +12,7 @@ function HomeScreen() {
         <Map />
 
         <StartButton />
-
-        <View style={styles.summaryContainer}>
-          <ActivitySummary />
-        </View>
+        
       </View>
     </SafeAreaView>
   );
@@ -23,18 +21,9 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-  },
+    backgroundColor: Colors.background,
+  },  
 
-  buttonStyle: {
-    // zIndex: 1,
-  },
-
-  summaryContainer: {
-    height: 200,
-    alignItems: "center",
-    justifyContent: "center",
-  },
 });
 
 export default HomeScreen;

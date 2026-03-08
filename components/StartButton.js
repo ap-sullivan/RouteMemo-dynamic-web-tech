@@ -4,6 +4,8 @@ import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { calculateDistance } from "../utils/distance";
+import ActivitySummary from "./CurrentActivitySummary";
+import Colors from "../constants/Colors";
 
 function StartButton() {
   const [recording, setRecording] = useState(false);
@@ -13,6 +15,7 @@ function StartButton() {
 
   const [startTime, setStartTime] = useState(null);
   const watchId = useRef(null);
+  const [duration, setDuration] = useState(0);
 
   // request location permission on mount
   useEffect(() => {
@@ -25,7 +28,7 @@ function StartButton() {
   }, []);
 
   const startRecording = async () => {
-    1; // reset route and start time when starting a new recording
+    1; // reset route and start time 
     setRoute([]);
     // get start time and save to state
     setStartTime(new Date());
@@ -42,6 +45,20 @@ function StartButton() {
     );
   };
 
+  // timer showing duration while recording run
+  useEffect(() => {
+    let interval;
+
+    if (recording && startTime) {
+      interval = setInterval(() => {
+        const now = new Date();
+        setDuration((now - startTime) / 1000);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [recording, startTime]);
+
   // stop recording and save route to async function
   const stopRecording = async () => {
     setRecording(false);
@@ -50,7 +67,7 @@ function StartButton() {
       watchId.current = null;
     }
 
-    // work out duration distance speed
+    // work out duration, distance speed
     const endTime = new Date();
     const duration = (endTime - startTime) / 1000;
     const distance = calculateDistance(route);
@@ -62,11 +79,11 @@ function StartButton() {
       route,
       startPoint: route[0],
       endPoint: route[route.length - 1],
-      duration, 
-      distance, 
-      speed, 
+      duration,
+      distance,
+      speed,
       timestamp: startTime.toISOString(),
-      notes: "Great bit of exercise!",
+      notes: "Add your notes here",
     };
 
     //  save to async storage
@@ -86,6 +103,7 @@ function StartButton() {
     // reset route and start time for next time
     setRoute([]);
     setStartTime(null);
+    setDuration(0);
   };
 
   const handleStart = () => {
@@ -93,22 +111,41 @@ function StartButton() {
     else startRecording();
   };
 
+  //  calculate distance using util function that uses haversine formula
   const distance = calculateDistance(route);
 
+  // speed calculation
+  const speed = duration > 0 ? distance / duration : 0;
+
+  //end time
+
+  const endTime = startTime ? new Date(startTime.getTime() + duration * 1000) : null;
+
+
   return (
-    <View style={styles.startContainer}>
-      <Text style={styles.title}>
-        {recording ? "Recording..." : "Start Activity"}
-      </Text>
-      <Pressable onPress={handleStart}
-      style={styles.buttonContainer}>
-        <Feather
-          name="power"
-          size={124}
-          color="red"
-          // style={styles.buttonStyle}
+    <View style={styles.container}>
+      <View style={styles.startContainer}>
+        <Text style={styles.title}>
+          {recording ? "Recording..." : "Start Activity"}
+        </Text>
+        <Pressable onPress={handleStart} style={styles.buttonContainer}>
+          <Feather
+            name="power"
+            size={108}
+            color={Colors.primaryDark}
+
+            // style={styles.buttonStyle}
+          />
+        </Pressable>
+      </View>
+      <View style={styles.summaryContainer}>
+        <ActivitySummary
+          distance={distance}
+          duration={duration}
+          speed={speed}
+          target={10}
         />
-      </Pressable>
+      </View>
     </View>
   );
 }
@@ -116,15 +153,40 @@ function StartButton() {
 export default StartButton;
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.background,
+    flex: 1,
+  },
+
   startContainer: {
-    height: 200,
+    marginTop: 30,
     alignItems: "center",
-    justifyContent: "center",
   },
 
   title: {
+    color: Colors.primary,
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+  },
+
+  buttonContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 80,
+    backgroundColor: Colors.grayLight,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+    shadowColor: Colors.primaryLight,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+
+  summaryContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
