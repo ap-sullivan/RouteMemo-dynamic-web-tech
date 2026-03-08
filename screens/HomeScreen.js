@@ -7,7 +7,7 @@ import StartButton from "../components/StartButton";
 
 function HomeScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         <Map />
 

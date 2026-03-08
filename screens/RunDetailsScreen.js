@@ -1,13 +1,14 @@
 //  screen to show individual run details and have option to add notes edit and add photos etc
 
-import { Text, View, Alert } from "react-native";
+import { Text, View, Alert, ScrollView } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Map from "../components/Map";
 import RunSummary from "../components/RunSummary";
+import Camera from "../components/Camera";
+import Colors from "../constants/Colors";
 
 function RunDetailsScreen() {
   const navigation = useNavigation();
@@ -72,21 +73,23 @@ const deleteRun = async (id) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+
         <Map />
         <RunSummary run={run} onSaveNote={saveNote} onDelete={deleteRun} />
-      </View>
+        <Camera/>
+      
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 export default RunDetailsScreen;
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//   },
- 
-// });
+const styles = {
+  container: {
+    flex: 1,
+     backgroundColor: Colors.background,
+  }
+};

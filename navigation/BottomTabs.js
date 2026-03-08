@@ -3,6 +3,7 @@ import RunStack from "./RunStack";
 import HomeScreen from "../screens/HomeScreen";
 import RunListScreen from "../screens/RunListScreen";
 import { Feather } from "@expo/vector-icons";
+import Colors from "../constants/Colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,6 +24,7 @@ function BottomTabs() {
           justifyContent: "center",
           alignItems: "center",
           height: 60,
+          backgroundColor: Colors.white,
         },
         tabBarIconStyle: {
           width: "100%",
@@ -33,7 +35,7 @@ function BottomTabs() {
 
           if (route.name === "Home") {
             iconName = "home";
-          } else if (route.name === "RunList") {
+          } else if (route.name === "Runs") {
             iconName = "list";
           }
 
@@ -41,14 +43,14 @@ function BottomTabs() {
             <Feather
               name={iconName}
               size={size}
-              color={focused ? "#007AFF" : "gray"}
+              color={focused ? Colors.primaryDark : Colors.background}
             />
           );
         },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="RunList" component={RunStack} />
+      <Tab.Screen name="Runs" component={RunStack} />
     </Tab.Navigator>
   );
 }

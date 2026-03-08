@@ -3,9 +3,10 @@ import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RunListTable from "../components/RunListTable";
+import Colors from "../constants/Colors";
 
 function RunListScreen({ navigation }) {
-  
+
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
@@ -44,5 +45,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: Colors.background,
   },
 });

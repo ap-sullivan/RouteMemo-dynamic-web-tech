@@ -15,6 +15,7 @@
     "@react-navigation/native-stack": "^7.14.2",
     "babel-preset-expo": "~55.0.8",
     "expo": "~55.0.3",
+    "expo-camera": "~55.0.9",
     "expo-location": "~55.1.2",
     "expo-status-bar": "~55.0.4",
     "haversine-distance": "^1.2.4",

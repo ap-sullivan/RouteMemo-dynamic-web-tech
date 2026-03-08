@@ -11,9 +11,10 @@ export default ({ config }) => ({
   splash: {
     image: './assets/routeMemo_white.png',
     resizeMode: 'contain',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#0d1601',
   },
   ios: {
+    bundleIdentifier: "com.thewebdeveloperglasgow.RouteMemo2",
     supportsTablet: true,
     infoPlist: {
     NSLocationWhenInUseUsageDescription:
@@ -33,8 +34,21 @@ export default ({ config }) => ({
       googleMaps: {
         apiKey: process.env.GOOGLE_MAPS_API_KEY || '',
       },
-    },
+    },  
   },
+
+    plugins: [
+    [
+      "expo-camera",
+      {
+        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
+        microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone",
+        recordAudioAndroid: true,
+        barcodeScannerEnabled: true
+      }
+    ]
+  ],
+
   web: {
     favicon: './assets/favicon.png',
   },

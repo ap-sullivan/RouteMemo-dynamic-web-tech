@@ -1,5 +1,6 @@
 import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import { getTimeParts } from "../utils/time";
+import Colors from "../constants/Colors";
 
 function RunListTable({ activities, onPressItem }) {
   const renderItem = ({ item, index }) => (
@@ -49,17 +50,20 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: "bold",
     textAlign: "center",
+    color: Colors.primaryDark,
   },
 
   row: {
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderColor: "#ccc",
+    borderColor: Colors.primaryLightest,
     paddingVertical: 5,
   },
 
   cell: {
     flex: 1,
     textAlign: "center",
+    color: Colors.primary,
+    paddingVertical: 4,
   },
 });
