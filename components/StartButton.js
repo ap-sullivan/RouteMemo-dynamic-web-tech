@@ -88,10 +88,14 @@ function StartButton() {
 
     //  save to async storage
     try {
+
+      // get existing activities from storage or start with empty array
       const existing = await AsyncStorage.getItem("activities");
       const parsed = existing ? JSON.parse(existing) : [];
+
       // push new activity to array and save back to storage
       parsed.push(activityLog);
+
       // stringify and save to storage
       await AsyncStorage.setItem("activities", JSON.stringify(parsed));
 

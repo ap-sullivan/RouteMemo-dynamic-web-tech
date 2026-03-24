@@ -9,6 +9,8 @@ import Map from "../components/Map";
 import RunSummary from "../components/RunSummary";
 import Camera from "../components/Camera";
 import Colors from "../constants/Colors";
+import { useCameraPermissions } from "expo-camera";
+import { addPhotoToRun } from "../utils/addPhoto";
 
 function RunDetailsScreen() {
   const navigation = useNavigation();
@@ -16,6 +18,9 @@ function RunDetailsScreen() {
   const { runId } = route.params;
 
   const [run, setRun] = useState(null);
+
+  const [showCamera, setShowCamera] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
   // load exercise details based on runid passed from list screen
   useEffect(() => {
@@ -31,37 +36,63 @@ function RunDetailsScreen() {
     loadRun();
   }, [runId]);
 
-// function to save notes to specific run updates async and local state
+  // function to save notes to specific run updates async and local state
   const saveNote = async (notes) => {
-  const existing = await AsyncStorage.getItem("activities");
-  const parsed = existing ? JSON.parse(existing) : [];
+    const existing = await AsyncStorage.getItem("activities");
+    const parsed = existing ? JSON.parse(existing) : [];
 
-  const updated = parsed.map((item) =>
-    item.id === runId ? { ...item, notes: notes } : item
-  );
+    const updated = parsed.map((item) =>
+      item.id === runId ? { ...item, notes: notes } : item,
+    );
 
-  await AsyncStorage.setItem("activities", JSON.stringify(updated));
+    await AsyncStorage.setItem("activities", JSON.stringify(updated));
 
-  setRun((prev) => ({ ...prev, notes }));
+    setRun((prev) => ({ ...prev, notes }));
 
+    Alert.alert("Saved", "Your notes were updated");
+  };
 
-  Alert.alert("Saved", "Your notes were updated");
+  // function to delete run from async storage  and navigate back to list screen
+  const deleteRun = async (id) => {
+    const existing = await AsyncStorage.getItem("activities");
+    const parsed = existing ? JSON.parse(existing) : [];
+
+    const updated = parsed.filter((item) => item.id !== id);
+
+    await AsyncStorage.setItem("activities", JSON.stringify(updated));
+
+    Alert.alert("Deleted", "The run was deleted");
+    navigation.goBack();
+  };
+
+ 
+  const handleOpenCamera = async () => {
+  if (!permission || permission.status !== "granted") {
+
+    console.log("permission before:", permission);
+
+    const result = await requestPermission();
+
+    console.log("permission result:", result);
+
+    if (result.status !== "granted") {
+      Alert.alert(
+        "Permission required",
+        "Camera access is needed to take photos"
+      );
+      return;
+    }
+  }
+
+  setShowCamera(true);
 };
 
-// function to delete run from async storage  and navigate back to list screen
-const deleteRun = async (id) => {
-  const existing = await AsyncStorage.getItem("activities");
-  const parsed = existing ? JSON.parse(existing) : [];
+  const savePhoto = async (uri) => {
+    const updatedRun = await addPhotoToRun(runId, uri);
+    setRun(updatedRun);
+  };
 
-  const updated = parsed.filter((item) => item.id !== id);
-
-  await AsyncStorage.setItem("activities", JSON.stringify(updated));
-
-  Alert.alert("Deleted", "The run was deleted");
-  navigation.goBack();
-}
-
-// show loading if not ready
+  // show loading if not ready
   if (!run) {
     return (
       <SafeAreaView
@@ -73,15 +104,33 @@ const deleteRun = async (id) => {
   }
 
   return (
+   
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+  <ScrollView>
+    <Map />
 
-        <Map />
-        <RunSummary run={run} onSaveNote={saveNote} onDelete={deleteRun} />
-        <Camera/>
-      
-      </ScrollView>
-    </SafeAreaView>
+    <RunSummary
+      run={run}
+      onSaveNote={saveNote}
+      onDelete={deleteRun}
+      onOpenCamera={handleOpenCamera}
+    />
+  </ScrollView>
+
+{/* if showCamera is true, display the camera component as an overlay */}
+  {showCamera && (
+    <View style={styles.overlay}>
+      <Camera
+        onPhotoTaken={(uri) => {
+          if (uri) savePhoto(uri);
+          setShowCamera(false);
+        }}
+      />
+    </View>
+  )}
+</SafeAreaView>
+
+
   );
 }
 
@@ -90,6 +139,15 @@ export default RunDetailsScreen;
 const styles = {
   container: {
     flex: 1,
-     backgroundColor: Colors.background,
+    backgroundColor: Colors.background,
+  },
+
+  overlay: {
+     position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "black"
   }
 };
