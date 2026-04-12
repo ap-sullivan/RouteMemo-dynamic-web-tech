@@ -65,11 +65,11 @@ function RunSummary({ run, onSaveNote, onDelete, onOpenCamera }) {
         <View style={styles.rowWrapper}>
           <View style={styles.itemWrapper}>
             <Text style={styles.label}>Avg. Speed: </Text>
-            <Text style={styles.value}>{run.speed.toFixed(2)} m/s</Text>
+            <Text style={styles.value}>{run.speed.toFixed(2)} km/h</Text>
           </View>
           <View style={styles.itemWrapper}>
-            <Text style={styles.label}>Steps: TODO </Text>
-            <Text style={styles.value}></Text>
+            <Text style={styles.label}>Steps: </Text>
+            <Text style={styles.value}>{run.steps}</Text>
           </View>
         </View>
       </View>
@@ -85,38 +85,6 @@ function RunSummary({ run, onSaveNote, onDelete, onOpenCamera }) {
         <Text style={styles.saveButtonText}>Save Notes</Text>
       </Pressable>
 
-      <Pressable style={styles.saveButton} onPress={onOpenCamera}>
-        <Text style={styles.saveButtonText}>Upload Photos</Text>
-      </Pressable>
-
-      <Pressable style={[styles.saveButton, styles.deleteButton]}>
-        <Text
-          style={[styles.saveButtonText, styles.deleteButtonText]}
-          onPress={() =>
-            Alert.alert(
-              "Delete Exercise",
-              "Are you sure, this cannot be un-done?",
-              [
-                { text: "Cancel", style: "cancel" },
-                {
-                  text: "Delete",
-                  style: "destructive",
-                  onPress: () => onDelete(run.id),
-                },
-              ],
-            )
-          }
-        >
-          Delete Exercise
-        </Text>
-      </Pressable>
-
-      <View style={{ marginTop: 20, backgroundColor: 'red' }}>
-        {run.photos &&
-          run.photos.map((uri, index) => (
-            <Image key={index} source={{ uri }} style={styles.photo} />
-          ))}
-      </View>
     </View>
   );
 }
@@ -145,7 +113,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
   },
 
   itemWrapper: {
@@ -162,10 +130,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.primary,
   },
+
   notesInput: {
     color: Colors.background,
     backgroundColor: Colors.primaryLightest,
-    height: 90,
+    height: 70,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 12,
@@ -183,16 +152,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  deleteButton: {
-    backgroundColor: Colors.danger,
-  },
-  deleteButtonText: {
-    color: Colors.white,
-  },
 
   photo: {
+    borderWidth: 3,
+    borderColor: Colors.primaryLight,
     width: "100%",
     height: 200,
+    marginTop: 20,
     marginBottom: 10,
     borderRadius: 12,
   },

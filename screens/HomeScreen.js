@@ -7,7 +7,7 @@ import StartButton from "../components/StartButton";
 
 function HomeScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={styles.container}>
         <Map />
 

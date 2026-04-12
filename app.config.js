@@ -15,15 +15,16 @@ export default ({ config }) => ({
   },
   ios: {
     bundleIdentifier: "com.thewebdeveloperglasgow.RouteMemo2",
-    supportsTablet: true,
-    infoPlist: {
+  infoPlist: {
     NSLocationWhenInUseUsageDescription:
       "This app uses your location to track your route and provide you with a summary of your activity.",
-  },
-  },
+    NSMotionUsageDescription:
+      "This app uses motion data to count your steps during activities."
+  }
+},
   android: {
     package: 'com.thewebdeveloperglasgow.RouteMemo2',
-    permissions: ['ACCESS_FINE_LOCATION'],
+    permissions: ['ACCESS_FINE_LOCATION', 'ACTIVITY_RECOGNITION'],
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
@@ -46,6 +47,10 @@ export default ({ config }) => ({
         recordAudioAndroid: true,
         barcodeScannerEnabled: true
       }
+      //  "expo-sensors",
+      //   {
+      //     motionPermission: "Allow $(PRODUCT_NAME) to access your device motion"
+      //   }
     ]
   ],
 

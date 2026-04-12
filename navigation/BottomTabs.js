@@ -16,7 +16,7 @@ function BottomTabs() {
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          bottom: 20,
+          bottom: 10,
           height: 60,
           flexDirection: "row",
         },

@@ -2,15 +2,18 @@
 
 import { Text, View, Alert, ScrollView } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Map from "../components/Map";
 import RunSummary from "../components/RunSummary";
+import UploadPhoto from "../components/UploadPhoto";
+import DeleteButton from "../components/DeleteButton";
 import Camera from "../components/Camera";
 import Colors from "../constants/Colors";
 import { useCameraPermissions } from "expo-camera";
 import { addPhotoToRun } from "../utils/addPhoto";
+
 
 function RunDetailsScreen() {
   const navigation = useNavigation();
@@ -52,7 +55,7 @@ function RunDetailsScreen() {
     Alert.alert("Saved", "Your notes were updated");
   };
 
-  // function to delete run from async storage  and navigate back to list screen
+  // function to delete run from async storage and navigate back to list screen
   const deleteRun = async (id) => {
     const existing = await AsyncStorage.getItem("activities");
     const parsed = existing ? JSON.parse(existing) : [];
@@ -65,31 +68,58 @@ function RunDetailsScreen() {
     navigation.goBack();
   };
 
- 
   const handleOpenCamera = async () => {
-  if (!permission || permission.status !== "granted") {
+    if (!permission || permission.status !== "granted") {
+      console.log("permission before:", permission);
 
-    console.log("permission before:", permission);
+      const result = await requestPermission();
 
-    const result = await requestPermission();
+      console.log("permission result:", result);
 
-    console.log("permission result:", result);
-
-    if (result.status !== "granted") {
-      Alert.alert(
-        "Permission required",
-        "Camera access is needed to take photos"
-      );
-      return;
+      if (result.status !== "granted") {
+        Alert.alert(
+          "Permission required",
+          "Camera access is needed to take photos",
+        );
+        return;
+      }
     }
-  }
 
-  setShowCamera(true);
-};
+    setShowCamera(true);
+  };
+
+  // hide tab bar when camera is open
+//   useLayoutEffect(() => {
+//   navigation.getParent()?.setOptions({
+//     tabBarStyle: showCamera ? { display: "none" } : undefined,
+//   });
+// }, [navigation, showCamera]);
 
   const savePhoto = async (uri) => {
     const updatedRun = await addPhotoToRun(runId, uri);
     setRun(updatedRun);
+  };
+
+  // function to delete photo from run updates async and local state
+  // index is used to identify which photo to delete as multiple photos can have same uri
+  const deletePhoto = async (index) => {
+    const existing = await AsyncStorage.getItem("activities");
+    const parsed = existing ? JSON.parse(existing) : [];
+
+    const updated = parsed.map((item) => {
+      if (item.id === runId) {
+        const updatedPhotos = item.photos.filter((_, i) => i !== index);
+        return { ...item, photos: updatedPhotos };
+      }
+      return item;
+    });
+
+    await AsyncStorage.setItem("activities", JSON.stringify(updated));
+
+    setRun((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index),
+    }));
   };
 
   // show loading if not ready
@@ -104,33 +134,37 @@ function RunDetailsScreen() {
   }
 
   return (
-   
-    <SafeAreaView style={styles.container}>
-  <ScrollView>
-    <Map />
+    <SafeAreaView style={styles.container} >
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}>
+        <Map route={run.route} />
 
-    <RunSummary
-      run={run}
-      onSaveNote={saveNote}
-      onDelete={deleteRun}
-      onOpenCamera={handleOpenCamera}
-    />
-  </ScrollView>
+        <RunSummary
+          run={run}
+          onSaveNote={saveNote}
+          onOpenCamera={handleOpenCamera}
+        />
 
-{/* if showCamera is true, display the camera component as an overlay */}
-  {showCamera && (
-    <View style={styles.overlay}>
-      <Camera
-        onPhotoTaken={(uri) => {
-          if (uri) savePhoto(uri);
-          setShowCamera(false);
-        }}
-      />
-    </View>
-  )}
-</SafeAreaView>
+        <UploadPhoto
+          photos={run.photos}
+          onOpenCamera={handleOpenCamera}
+          onDeletePhoto={deletePhoto}
+        />
 
+        <DeleteButton id={run.id} onDelete={deleteRun} />
+      </ScrollView>
 
+      {/* if showCamera is true, display the camera component as an overlay */}
+      {showCamera && (
+        <View style={styles.overlay}>
+          <Camera
+            onPhotoTaken={(uri) => {
+              if (uri) savePhoto(uri);
+              setShowCamera(false);
+            }}
+          />
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
 
@@ -138,16 +172,18 @@ export default RunDetailsScreen;
 
 const styles = {
   container: {
+    paddingBottom: 0,
     flex: 1,
+    flexGrow: 1,
     backgroundColor: Colors.background,
   },
 
   overlay: {
-     position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "black"
-  }
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "black",
+  },
 };

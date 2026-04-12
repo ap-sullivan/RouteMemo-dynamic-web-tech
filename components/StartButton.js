@@ -2,38 +2,64 @@ import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Pedometer } from "expo-sensors";
 import * as Location from "expo-location";
 import { calculateDistance } from "../utils/distance";
-import ActivitySummary from "./CurrentActivitySummary";
+import CurrentActivitySummary from "./CurrentActivitySummary";
 import Colors from "../constants/Colors";
 
 function StartButton() {
+  // state for recording status and location
   const [recording, setRecording] = useState(false);
   const [location, setLocation] = useState(null);
 
+  // state for route coordinates
   const [route, setRoute] = useState([]);
 
+  // state for duration of activity
   const [startTime, setStartTime] = useState(null);
   const watchId = useRef(null);
   const [duration, setDuration] = useState(0);
 
-  // request location permission on mount
+  //  state for step count
+  const [steps, setSteps] = useState(0);
+  const pedometerSubscription = useRef(null);
+
+  // request location and pedometer permissions on mount
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         alert("Permission to access location is required to use the app");
       }
+
+      // pedometer
+      const { status: pedometerStatus } =
+        await Pedometer.requestPermissionsAsync();
+
+      if (pedometerStatus !== "granted") {
+        alert("Permission to access pedometer is required to use the app");
+      }
     })();
   }, []);
 
   const startRecording = async () => {
-    1; // reset route and start time 
+    // reset route and start time
     setRoute([]);
     // get start time and save to state
     setStartTime(new Date());
     // change recording state to true
     setRecording(true);
+    // reset steps
+    setSteps(0);
+
+    const isAvailable = await Pedometer.isAvailableAsync();
+    console.log("Pedometer available:", isAvailable);
+
+    // start pedometer
+    pedometerSubscription.current = Pedometer.watchStepCount((result) => {
+      setSteps(result.steps);
+    });
 
     // watch loc at interval of 5m and save to array in state
     watchId.current = await Location.watchPositionAsync(
@@ -62,6 +88,13 @@ function StartButton() {
   // stop recording and save route to async function
   const stopRecording = async () => {
     setRecording(false);
+
+    // stop pedometer
+    if (pedometerSubscription.current) {
+      pedometerSubscription.current.remove();
+      pedometerSubscription.current = null;
+    }
+    // stop location tracking
     if (watchId.current) {
       watchId.current.remove();
       watchId.current = null;
@@ -71,7 +104,8 @@ function StartButton() {
     const endTime = new Date();
     const duration = (endTime - startTime) / 1000;
     const distance = calculateDistance(route);
-    const speed = distance / duration;
+    // save as km/h
+    const speed = duration > 0 ? (distance / duration) * 3.6 : 0;
 
     // create object with run data to save to async storage
     const activityLog = {
@@ -82,13 +116,13 @@ function StartButton() {
       duration,
       distance,
       speed,
+      steps,
       timestamp: startTime.toISOString(),
       notes: "Add your notes here",
     };
 
     //  save to async storage
     try {
-
       // get existing activities from storage or start with empty array
       const existing = await AsyncStorage.getItem("activities");
       const parsed = existing ? JSON.parse(existing) : [];
@@ -118,13 +152,13 @@ function StartButton() {
   //  calculate distance using util function that uses haversine formula
   const distance = calculateDistance(route);
 
-  // speed calculation
-  const speed = duration > 0 ? distance / duration : 0;
+  // speed calculation for km/h
+  const speed = duration > 0 ? (distance / duration) * 3.6 : 0;
 
   //end time
-
-  const endTime = startTime ? new Date(startTime.getTime() + duration * 1000) : null;
-
+  const endTime = startTime
+    ? new Date(startTime.getTime() + duration * 1000)
+    : null;
 
   return (
     <View style={styles.container}>
@@ -143,11 +177,12 @@ function StartButton() {
         </Pressable>
       </View>
       <View style={styles.summaryContainer}>
-        <ActivitySummary
+        <CurrentActivitySummary
           distance={distance}
           duration={duration}
           speed={speed}
-          target={10}
+          // target={10}
+          steps={steps}
         />
       </View>
     </View>

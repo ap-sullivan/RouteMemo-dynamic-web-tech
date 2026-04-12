@@ -2,8 +2,9 @@ import { View, Text, StyleSheet } from "react-native";
 import { getTimeParts } from "../utils/time";
 import Colors from "../constants/Colors";
 
-function ActivitySummary({ distance, duration, speed, target }) {
-  // use helper to convert duration in seconds to minutes and seconds for display
+function CurrentActivitySummary({ distance, duration, speed, steps }) {
+
+  // use helper function in utils to convert duration in seconds to minutes and seconds for display
   const { minutes, seconds } = getTimeParts(duration);
 
   return (
@@ -27,12 +28,12 @@ function ActivitySummary({ distance, duration, speed, target }) {
       <View style={styles.outerContainer}>
          <View style={styles.innerContainer}>
           <Text style={styles.label}>Step Count: </Text>
-          <Text style={styles.value}>{minutes}  </Text>
+          <Text style={styles.value}>{steps}  </Text>
         </View>
 
          <View style={styles.innerContainer}>
           <Text style={styles.label}>Speed: </Text>
-          <Text style={[styles.value, styles.value2]}>{speed.toFixed(2)} </Text>
+          <Text style={[styles.value, styles.value2]}>{speed.toFixed(2)} km/h </Text>
      
         </View>
 
@@ -56,7 +57,7 @@ function ActivitySummary({ distance, duration, speed, target }) {
   );
 }
 
-export default ActivitySummary;
+export default CurrentActivitySummary;
 
 const styles = StyleSheet.create({
   container: {
