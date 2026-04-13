@@ -1,17 +1,9 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  Alert,
-  Image,
-} from "react-native";
-import { lazy, useState } from "react";
+import { Text, View, StyleSheet } from "react-native";
+import { useState } from "react";
 import Colors from "../constants/Colors";
 import { getTimeParts } from "../utils/time";
 
-function RunSummary({ run, onSaveNote, onDelete, onOpenCamera }) {
+function RunSummary({ run }) {
   // state to hold notes input with existing notes as initial value
   const [notes, setNotes] = useState(run.notes || "");
 
@@ -73,18 +65,6 @@ function RunSummary({ run, onSaveNote, onDelete, onOpenCamera }) {
           </View>
         </View>
       </View>
-      <TextInput
-        style={styles.notesInput}
-        value={notes}
-        onChangeText={setNotes}
-        placeholder={run.notes}
-        multiline={true}
-        numberOfLines={4}
-      />
-      <Pressable style={styles.saveButton} onPress={() => onSaveNote(notes)}>
-        <Text style={styles.saveButtonText}>Save Notes</Text>
-      </Pressable>
-
     </View>
   );
 }
@@ -129,28 +109,6 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 16,
     color: Colors.primary,
-  },
-
-  notesInput: {
-    color: Colors.background,
-    backgroundColor: Colors.primaryLightest,
-    height: 70,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    textAlignVertical: "top",
-  },
-  saveButton: {
-    backgroundColor: Colors.primary,
-    padding: 12,
-    borderRadius: 12,
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: Colors.black,
-    fontWeight: "bold",
-    textAlign: "center",
   },
 
   photo: {

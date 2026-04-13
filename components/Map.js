@@ -8,8 +8,16 @@ function Map({ route }) {
   const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
 
+  // ? Paisley location
+      //Latitude: 55.8436
+      // Longitude: -4.4292
+
   // request permissions and get current location
   useEffect(() => {
+
+    // skip if route already present (for detail screen)
+    if (route && route.length > 0) return;
+
     (async () => {
       // Request location permissions
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -19,35 +27,23 @@ function Map({ route }) {
         return;
       }
 
-      // ? Paisley location
-      //Latitude: 55.8436
-      // Longitude: -4.4292
-
       // Get current location
       let loc = await Location.getCurrentPositionAsync({});
       setLocation(loc.coords);
 
-      // Animate map to current location if no route provided
-      if (!route) {
-      mapRef.current?.animateToRegion({
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
+   
+    })();
+  }, [route]);
+
+  // use effect to fit map to route coordinates when route changes
+  useEffect(() => {
+    if (route && route.length > 0) {
+      mapRef.current?.fitToCoordinates(route, {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
       });
     }
-    })();
-  }, []);
-
-  // Fit map to route coordinates when route changes
-  useEffect(() => {
-  if (route && route.length > 0) {
-    mapRef.current?.fitToCoordinates(route, {
-      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-      animated: true,
-    });
-  }
-}, [route]);
+  }, [route]);
 
   return (
     <View style={styles.container}>
@@ -55,8 +51,9 @@ function Map({ route }) {
         <MapView
           ref={mapRef}
           style={styles.map}
-          showsUserLocation={!route}
+          showsUserLocation={true}
           zoomControlEnabled={true}
+         
         >
           {!route && location && (
             <Marker
@@ -70,7 +67,6 @@ function Map({ route }) {
           {/* Route */}
           {route && route.length > 0 && (
             <>
-              
               <Marker coordinate={route[0]} title="Start" />
 
               <Marker
@@ -79,12 +75,15 @@ function Map({ route }) {
                 pinColor="red"
               />
 
-              {/* Route line */}
-              <Polyline
-                coordinates={route}
-                strokeColor="black"
-                strokeWidth={8}
-              />
+              {/* Route line - if no route provided show current */}
+              {route && route.length > 0 && (
+                <Polyline
+                  coordinates={route}
+                  strokeColor="black"
+                  strokeWidth={3}
+                  lineDashPattern={[6, 6]}
+                />
+              )}
             </>
           )}
         </MapView>

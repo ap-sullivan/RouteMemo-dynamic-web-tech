@@ -5,7 +5,7 @@ function DeleteButton({ id, onDelete }) {
   const handleDelete = () => {
     Alert.alert(
       "Delete Exercise",
-      "Are you sure, this cannot be un-done?",
+      "Are you sure, this cannot be undone?",
       [
         { text: "Cancel", style: "cancel" },
         {

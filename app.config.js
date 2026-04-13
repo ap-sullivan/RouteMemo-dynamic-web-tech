@@ -13,13 +13,15 @@ export default ({ config }) => ({
     resizeMode: 'contain',
     backgroundColor: '#0d1601',
   },
+  
   ios: {
     bundleIdentifier: "com.thewebdeveloperglasgow.RouteMemo2",
   infoPlist: {
     NSLocationWhenInUseUsageDescription:
       "This app uses your location to track your route and provide you with a summary of your activity.",
     NSMotionUsageDescription:
-      "This app uses motion data to count your steps during activities."
+      "This app uses motion data to count your steps during activities.",
+      "ITSAppUsesNonExemptEncryption": false,
   }
 },
   android: {
@@ -36,6 +38,12 @@ export default ({ config }) => ({
         apiKey: process.env.GOOGLE_MAPS_API_KEY || '',
       },
     },  
+  },
+
+   extra: {
+    eas: {
+      projectId: "25fbf6d3-b30d-4c7b-8a3d-8d08eaac410b",
+    },
   },
 
     plugins: [

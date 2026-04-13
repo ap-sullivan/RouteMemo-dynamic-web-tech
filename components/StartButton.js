@@ -8,13 +8,11 @@ import { calculateDistance } from "../utils/distance";
 import CurrentActivitySummary from "./CurrentActivitySummary";
 import Colors from "../constants/Colors";
 
-function StartButton() {
+function StartButton({ route, setRoute }) {
+  
   // state for recording status and location
   const [recording, setRecording] = useState(false);
   const [location, setLocation] = useState(null);
-
-  // state for route coordinates
-  const [route, setRoute] = useState([]);
 
   // state for duration of activity
   const [startTime, setStartTime] = useState(null);
@@ -61,9 +59,28 @@ function StartButton() {
       setSteps(result.steps);
     });
 
-    // watch loc at interval of 5m and save to array in state
+    // watch loc at interval and save to array in state
+
+    //  ? FOR ANDROID TESTING WHEN LOADING GPX FILE
+    // watchId.current = await Location.watchPositionAsync(
+    //   {
+    //     accuracy: Location.Accuracy.Highest,
+    //     timeInterval: 1000,
+    //     distanceInterval: 0,
+    //   },
+    //   (loc) => {
+    //     setLocation(loc.coords);
+    //     setRoute((prev) => [...prev, loc.coords]);
+    //   },
+    // );
+
+    //  ? IOS intervals
     watchId.current = await Location.watchPositionAsync(
-      { accuracy: Location.Accuracy.Highest, distanceInterval: 5 },
+      {
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: 3000,
+        distanceInterval: 5,
+      },
       (loc) => {
         setLocation(loc.coords);
         setRoute((prev) => [...prev, loc.coords]);
@@ -139,9 +156,8 @@ function StartButton() {
     }
 
     // reset route and start time for next time
-    setRoute([]);
-    setStartTime(null);
-    setDuration(0);
+    // setStartTime(null);
+    // setDuration(0);
   };
 
   const handleStart = () => {
@@ -167,15 +183,10 @@ function StartButton() {
           {recording ? "Recording..." : "Start Activity"}
         </Text>
         <Pressable onPress={handleStart} style={styles.buttonContainer}>
-          <Feather
-            name="power"
-            size={108}
-            color={Colors.primaryDark}
-
-            // style={styles.buttonStyle}
-          />
+          <Feather name="power" size={108} color={Colors.primaryDark} />
         </Pressable>
       </View>
+
       <View style={styles.summaryContainer}>
         <CurrentActivitySummary
           distance={distance}

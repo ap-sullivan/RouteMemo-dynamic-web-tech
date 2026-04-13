@@ -7,13 +7,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Map from "../components/Map";
 import RunSummary from "../components/RunSummary";
+import AddNotes from "../components/AddNotes";
 import UploadPhoto from "../components/UploadPhoto";
 import DeleteButton from "../components/DeleteButton";
 import Camera from "../components/Camera";
 import Colors from "../constants/Colors";
 import { useCameraPermissions } from "expo-camera";
 import { addPhotoToRun } from "../utils/addPhoto";
-
 
 function RunDetailsScreen() {
   const navigation = useNavigation();
@@ -30,7 +30,6 @@ function RunDetailsScreen() {
     const loadRun = async () => {
       const existing = await AsyncStorage.getItem("activities");
       const parsed = existing ? JSON.parse(existing) : [];
-
       const selectedRun = parsed.find((item) => item.id === runId);
 
       setRun(selectedRun);
@@ -39,15 +38,19 @@ function RunDetailsScreen() {
     loadRun();
   }, [runId]);
 
-  // function to save notes to specific run updates async and local state
+  // function to save notes to specific runs based on runid and update local state to show changes immediately
   const saveNote = async (notes) => {
     const existing = await AsyncStorage.getItem("activities");
+
+    // if there are existing activities, parse them, otherwise start with an empty array
     const parsed = existing ? JSON.parse(existing) : [];
 
+    // map through activities and update the one that matches the current runId 
     const updated = parsed.map((item) =>
       item.id === runId ? { ...item, notes: notes } : item,
     );
 
+    // save the updated array back to async storage
     await AsyncStorage.setItem("activities", JSON.stringify(updated));
 
     setRun((prev) => ({ ...prev, notes }));
@@ -89,11 +92,11 @@ function RunDetailsScreen() {
   };
 
   // hide tab bar when camera is open
-//   useLayoutEffect(() => {
-//   navigation.getParent()?.setOptions({
-//     tabBarStyle: showCamera ? { display: "none" } : undefined,
-//   });
-// }, [navigation, showCamera]);
+  useLayoutEffect(() => {
+    navigation.getParent()?.setOptions({
+      tabBarStyle: showCamera ? { display: "none" } : undefined,
+    });
+  }, [navigation, showCamera]);
 
   const savePhoto = async (uri) => {
     const updatedRun = await addPhotoToRun(runId, uri);
@@ -134,15 +137,16 @@ function RunDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} >
+    <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}>
         <Map route={run.route} />
 
         <RunSummary
           run={run}
-          onSaveNote={saveNote}
           onOpenCamera={handleOpenCamera}
         />
+
+        <AddNotes run={run} onSaveNote={saveNote} />
 
         <UploadPhoto
           photos={run.photos}
@@ -172,7 +176,6 @@ export default RunDetailsScreen;
 
 const styles = {
   container: {
-    paddingBottom: 0,
     flex: 1,
     flexGrow: 1,
     backgroundColor: Colors.background,

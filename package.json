@@ -17,7 +17,7 @@
     "expo": "~55.0.3",
     "expo-camera": "~55.0.9",
     "expo-dev-client": "~55.0.18",
-    "expo-location": "~55.1.2",
+    "expo-location": "~55.1.8",
     "expo-sensors": "~55.0.13",
     "expo-status-bar": "~55.0.4",
     "expo-system-ui": "~55.0.15",

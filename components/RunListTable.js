@@ -3,10 +3,9 @@ import { getTimeParts } from "../utils/time";
 import Colors from "../constants/Colors";
 
 function RunListTable({ activities, onPressItem }) {
-  const renderItem = ({ item, index }) => (
+  const renderItem = ({ item }) => (
     <Pressable onPress={() => onPressItem(item)}>
       <View style={styles.row}>
-        {/* <Text style={styles.cell}>{index + 1}</Text> */}
         <Text style={styles.cell}>
           {new Date(item.timestamp).toLocaleDateString("en-GB")}
         </Text>

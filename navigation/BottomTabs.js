@@ -30,7 +30,7 @@ function BottomTabs() {
           width: "100%",
           height: "100%",
         },
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused, size }) => {
           let iconName;
 
           if (route.name === "Home") {
