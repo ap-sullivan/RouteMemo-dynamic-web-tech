@@ -1,5 +1,7 @@
 # Instructions for installing RouteMemo locally
 
+These instructions will guide the user through getting RouteMemo application up and running on a Simulator (iOS) or Emulator (Android) on a local machine.
+
 ## iOS setup
 
 ### Prerequisites
@@ -43,11 +45,11 @@
 
 ### Environment Variables - Android Specific
 
-For Google maps to work on Android adding an API key to an .env file is necessary for maps to display
+For Google maps to work on Android adding an API key to an .env file is necessary for maps to display. This is in the report on the Local Installation slide
 
 1. Create a file called .env in the root folder of the project
 2. Copy the contents of the included .env.example file to the newly created .env file 
-3. Update with the API key given in the documentation
+3. Update with the API key given in the report documentation
 4. Install dotenv by running "npm install dotenv"
 5. After adding the .env file the dev server needs to be restarted (ctrl +c to kill current server)
 6. Run "npx expo start --dev-client" and maps should initailise if key is correctly added

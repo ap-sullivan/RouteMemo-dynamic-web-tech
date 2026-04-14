@@ -1,3 +1,4 @@
+// component that renders a table of previous activities 
 import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 import { getTimeParts } from "../utils/time";
 import Colors from "../constants/Colors";

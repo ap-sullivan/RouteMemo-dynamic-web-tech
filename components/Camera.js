@@ -1,3 +1,5 @@
+// component for the camera view and photo capture
+
 import { CameraView } from "expo-camera";
 import { useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -6,6 +8,7 @@ export default function Camera({ onPhotoTaken }) {
   const [facing, setFacing] = useState("back");
   const cameraRef = useRef(null);
 
+  // function to take photo and pass uri back to parent component
   const takePhoto = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();

@@ -1,3 +1,5 @@
+// component to display delete button for exercise with confirmation alert, triggered by onDelete function passed as prop 
+
 import { Pressable, Text, Alert, View } from "react-native";
 import Colors from "../constants/Colors";
 
@@ -32,6 +34,7 @@ const styles = {
 
   container: {
      paddingHorizontal: 20,
+     marginBottom: 30,
   },
 
      deleteButton: {

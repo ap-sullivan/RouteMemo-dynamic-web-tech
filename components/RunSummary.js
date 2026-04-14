@@ -1,3 +1,5 @@
+// component to display summary of a run on teh run details screen
+
 import { Text, View, StyleSheet } from "react-native";
 import { useState } from "react";
 import Colors from "../constants/Colors";

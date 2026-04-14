@@ -6,6 +6,7 @@ export const addPhotoToRun = async (runId, uri) => {
   const existing = await AsyncStorage.getItem("activities");
   const parsed = existing ? JSON.parse(existing) : [];
 
+  // map through activities and add the new photo uri to the photos array of the matching runId
   const updated = parsed.map((item) =>
     item.id === runId
       ? { ...item, photos: [...(item.photos || []), uri] }
@@ -14,5 +15,5 @@ export const addPhotoToRun = async (runId, uri) => {
 
   await AsyncStorage.setItem("activities", JSON.stringify(updated));
 
-  return updated.find((item) => item.id === runId); // return updated run
+  return updated.find((item) => item.id === runId); 
 };

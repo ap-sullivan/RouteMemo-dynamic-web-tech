@@ -8,10 +8,8 @@ import { calculateDistance } from "../utils/distance";
 import CurrentActivitySummary from "./CurrentActivitySummary";
 import Colors from "../constants/Colors";
 
-function StartButton({ route, setRoute }) {
-  
-  // state for recording status and location
-  const [recording, setRecording] = useState(false);
+function StartButton({ route, setRoute, recording, setRecording }) {
+
   const [location, setLocation] = useState(null);
 
   // state for duration of activity
@@ -98,7 +96,6 @@ function StartButton({ route, setRoute }) {
         setDuration((now - startTime) / 1000);
       }, 1000);
     }
-
     return () => clearInterval(interval);
   }, [recording, startTime]);
 
@@ -155,15 +152,14 @@ function StartButton({ route, setRoute }) {
       console.error("Failed to save activity", e);
     }
 
-    // reset route and start time for next time
-    // setStartTime(null);
-    // setDuration(0);
   };
 
   const handleStart = () => {
     if (recording) stopRecording();
     else startRecording();
   };
+
+// these are used for the live UI updates while recoding (and rendered in the component Current Activity Summary)
 
   //  calculate distance using util function that uses haversine formula
   const distance = calculateDistance(route);

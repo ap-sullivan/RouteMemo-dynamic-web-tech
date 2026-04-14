@@ -1,3 +1,4 @@
+// brand colours to be re-used across the app fro consistency
 
 const Colors = {
 

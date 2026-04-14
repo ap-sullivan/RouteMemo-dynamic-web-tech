@@ -1,3 +1,5 @@
+//component to handle uploading photos to the run details screen and rendering them in a gallery with option to delete
+
 import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 

@@ -1,3 +1,5 @@
+// component for adding notes to the run details screen
+
 import React, { useState } from "react";
 import { View, TextInput, Pressable, Text, StyleSheet } from "react-native";
 import Colors from "../constants/Colors";

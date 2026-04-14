@@ -1,20 +1,23 @@
+// component to display map with current location and route depending on props, used in both current activity and exercise detail screens
+
 import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import Colors from "../constants/Colors";
 
-function Map({ route }) {
+function Map({ route, recording }) {
+
+  // state for current location and ref for map to control view
   const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
-
+  
   // ? Paisley location
-      //Latitude: 55.8436
-      // Longitude: -4.4292
+  //Latitude: 55.8436
+  // Longitude: -4.4292
 
   // request permissions and get current location
   useEffect(() => {
-
     // skip if route already present (for detail screen)
     if (route && route.length > 0) return;
 
@@ -30,8 +33,6 @@ function Map({ route }) {
       // Get current location
       let loc = await Location.getCurrentPositionAsync({});
       setLocation(loc.coords);
-
-   
     })();
   }, [route]);
 
@@ -53,8 +54,9 @@ function Map({ route }) {
           style={styles.map}
           showsUserLocation={true}
           zoomControlEnabled={true}
-         
         >
+
+          {/* show current location marker if no route provided */}
           {!route && location && (
             <Marker
               coordinate={{
@@ -64,26 +66,26 @@ function Map({ route }) {
             />
           )}
 
-          {/* Route */}
+          {/* Route line - if no route provided show current activity */}
           {route && route.length > 0 && (
             <>
               <Marker coordinate={route[0]} title="Start" />
 
-              <Marker
-                coordinate={route[route.length - 1]}
-                title="End"
-                pinColor="red"
-              />
-
-              {/* Route line - if no route provided show current */}
-              {route && route.length > 0 && (
-                <Polyline
-                  coordinates={route}
-                  strokeColor="black"
-                  strokeWidth={3}
-                  lineDashPattern={[6, 6]}
+            {/*  only show end point if not recording */}
+              {!recording && (
+                <Marker
+                  coordinate={route[route.length - 1]}
+                  title="End"
+                  pinColor="red"
                 />
               )}
+
+              <Polyline
+                coordinates={route}
+                strokeColor="black"
+                strokeWidth={3}
+                lineDashPattern={[6, 6]}
+              />
             </>
           )}
         </MapView>
@@ -113,12 +115,12 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 
-  mapOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: 300,
-    backgroundColor: "rgba(0, 70, 0, 0.3)",
-  },
+  // mapOverlay: {
+  //   position: "absolute",
+  //   top: 0,
+  //   left: 0,
+  //   width: "100%",
+  //   height: 300,
+  //   backgroundColor: "rgba(0, 70, 0, 0.3)",
+  // },
 });

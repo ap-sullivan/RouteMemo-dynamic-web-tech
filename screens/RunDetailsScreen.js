@@ -22,6 +22,7 @@ function RunDetailsScreen() {
 
   const [run, setRun] = useState(null);
 
+  // state to control camera overlay visibility
   const [showCamera, setShowCamera] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -32,7 +33,11 @@ function RunDetailsScreen() {
       const parsed = existing ? JSON.parse(existing) : [];
       const selectedRun = parsed.find((item) => item.id === runId);
 
-      setRun(selectedRun);
+      // if run found set to state to show details and photos
+      setRun({
+        ...selectedRun,
+        photos: selectedRun.photos || [],
+      });
     };
 
     loadRun();
@@ -45,7 +50,7 @@ function RunDetailsScreen() {
     // if there are existing activities, parse them, otherwise start with an empty array
     const parsed = existing ? JSON.parse(existing) : [];
 
-    // map through activities and update the one that matches the current runId 
+    // map through activities and update the one that matches the current runId
     const updated = parsed.map((item) =>
       item.id === runId ? { ...item, notes: notes } : item,
     );
@@ -71,6 +76,7 @@ function RunDetailsScreen() {
     navigation.goBack();
   };
 
+  // function to handle opening camera checks permissions and shows camera if granted
   const handleOpenCamera = async () => {
     if (!permission || permission.status !== "granted") {
       console.log("permission before:", permission);
@@ -91,17 +97,36 @@ function RunDetailsScreen() {
     setShowCamera(true);
   };
 
-  // hide tab bar when camera is open
-  useLayoutEffect(() => {
-    navigation.getParent()?.setOptions({
-      tabBarStyle: showCamera ? { display: "none" } : undefined,
-    });
-  }, [navigation, showCamera]);
-
+  // function to save photo uri to specific run in async storage and update local state to show change
   const savePhoto = async (uri) => {
     const updatedRun = await addPhotoToRun(runId, uri);
     setRun(updatedRun);
   };
+
+  // hide tab bar when camera is open and show again when closed
+  useLayoutEffect(() => {
+    const parent = navigation.getParent();
+
+    parent?.setOptions({
+      tabBarStyle: showCamera
+        ? { display: "none" }
+        : {
+            position: "absolute",
+            bottom: 10,
+            height: 60,
+          },
+    });
+
+    return () => {
+      parent?.setOptions({
+        tabBarStyle: {
+          position: "absolute",
+          bottom: 10,
+          height: 60,
+        },
+      });
+    };
+  }, [navigation, showCamera]);
 
   // function to delete photo from run updates async and local state
   // index is used to identify which photo to delete as multiple photos can have same uri
@@ -137,23 +162,16 @@ function RunDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}>
         <Map route={run.route} />
-
-        <RunSummary
-          run={run}
-          onOpenCamera={handleOpenCamera}
-        />
-
+        <RunSummary run={run} onOpenCamera={handleOpenCamera} />
         <AddNotes run={run} onSaveNote={saveNote} />
-
         <UploadPhoto
           photos={run.photos}
           onOpenCamera={handleOpenCamera}
           onDeletePhoto={deletePhoto}
         />
-
         <DeleteButton id={run.id} onDelete={deleteRun} />
       </ScrollView>
 
@@ -187,6 +205,8 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: 999,
+    elevation: 999,
     backgroundColor: "black",
   },
 };

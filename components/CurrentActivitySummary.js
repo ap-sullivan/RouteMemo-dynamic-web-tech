@@ -1,3 +1,5 @@
+// component to display summary of current activity with distance duration speed and steps
+
 import { View, Text, StyleSheet } from "react-native";
 import { getTimeParts } from "../utils/time";
 import Colors from "../constants/Colors";
@@ -41,19 +43,6 @@ function CurrentActivitySummary({ distance, duration, speed, steps }) {
       </View>
     </View>
 
-    /* <Text style={styles.title}>Activity Summary</Text>
-
-    
-   
-
-        <View style={styles.statBox}>
-          <Text style={styles.label}>Speed</Text>
-          <Text style={styles.value}>
-            {speed.toFixed(2)}
-          </Text>
-          <Text style={styles.unit}>m/s</Text>
-        </View>
-      </View> */
   );
 }
 
