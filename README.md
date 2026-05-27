@@ -1,3 +1,15 @@
+# RouteMemo
+
+
+<p align="center">
+  <img src="./screenshots/1.png" width="220"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="./screenshots/2.png" width="220" />
+  &nbsp;&nbsp;&nbsp;
+    <img src="./screenshots/3.png" width="220" />
+</p>
+<br>
+
 # Instructions for installing RouteMemo locally
 
 These instructions will guide the user through getting RouteMemo application up and running on a Simulator (iOS) or Emulator (Android) on a local machine.
